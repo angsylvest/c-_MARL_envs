@@ -1,0 +1,5 @@
+# to generate .dylib file 
+g++ -dynamiclib -o libtest.dylib grid.cpp
+
+# for windows 
+g++ -shared grid.cpp -x libtest.dll 
