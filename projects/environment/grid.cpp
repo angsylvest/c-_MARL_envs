@@ -51,3 +51,17 @@ int main(){
 
 
 }
+
+extern "C" {
+    GridEnvironment* init(int rows, int cols) {
+        return new GridEnvironment(rows, cols);
+    }
+
+    void printGrid(GridEnvironment* grid) {
+        grid->printGrid();
+    }
+
+    void destroyGrid(GridEnvironment* grid) {
+        delete grid;
+    }
+}
