@@ -16,3 +16,5 @@ lib.destroyGrid.restype = None
 grid = lib.init(5, 5)
 lib.printGrid(grid)
 lib.destroyGrid(grid)
+
+
