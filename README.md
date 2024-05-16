@@ -1,1 +1,4 @@
-# c-_MARL_envs
+# C++ translation of common MARL envs
+
+
+
