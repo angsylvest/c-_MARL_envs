@@ -29,7 +29,7 @@ class Entity{
         float getMass();  
 }; 
 
-class Particle{
+class Particle: public Entity{
     public: 
         // agents moveable by default 
         bool moveable; 

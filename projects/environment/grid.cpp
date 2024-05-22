@@ -85,13 +85,46 @@ class GridEnvironment{
             return force_array; 
         }
 
-        float calcEnvironmentForce(){
+        float calcEnvironmentForce(list<Particle>* agents, float* p_force){
             return 0.0; 
         }
 
-        vector<float> getCollisionForce(Particle a, Particle b){
-            return {0,0}; 
+        vector<float> getCollisionForce(Particle* a, Particle* b){
+            Particle& agent_a = *a; // dereferences 
+            Particle& agent_b = *b; // dereferences 
+            
+            if (!agent_a.collide || !agent_b.collide) {
+                return {0, 0}; 
+            }
+
+            // Compute actual distance between entities
+            std::vector<float> delta_pos;
+            for (size_t i = 0; i < agent_a.position.size(); ++i) {
+                delta_pos.push_back(agent_a.position[i] - agent_b.position[i]);
+            }
+
+            float dist = 0.0f;
+            for (float delta : delta_pos) {
+                dist += delta * delta;
+            }
+            dist = std::sqrt(dist);
+
+            // Minimum allowable distance
+            float dist_min = agent_a.size + agent_b.size;
+
+            // Softmax penetration
+            float k = contact_margin;
+            float penetration = std::log1p(std::exp(-(dist - dist_min) / k) * k);
+
+            // Compute force
+            std::vector<float> force;
+            for (size_t i = 0; i < delta_pos.size(); ++i) {
+                force.push_back(contact_force * delta_pos[i] / dist * penetration);
+            }
+
+            return force;
         }
+
 
         void updateAgentState(list<Particle> agents){
 

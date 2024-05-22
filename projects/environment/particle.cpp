@@ -35,7 +35,7 @@ class Entity {
 }; 
 
 
-class Particle : private Entity{
+class Particle : public Entity{
     public: 
         // agents moveable by default 
         bool moveable = true; 
