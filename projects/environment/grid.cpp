@@ -53,13 +53,26 @@ class GridEnvironment{
 
         // list<Particle> returnEntities(){return agents;}
 
-        void step(){
+        void step(list<vector<float>> actions, list<Particle>* agents){
+            list<Particle>& agents_actual = *agents; // dereferences 
+
+            // apply action force 
+            float* force_array; 
+            force_array = calcActionForce(agents);
+            // apply env force 
+            list<Particle>& agent_a = *agents; // dereferences 
+            list<float> fl = *force_array; 
+
+            // TODO: need to fix, will cause errors 
+            vector<float> fl_out = applyEnvironmentForce(agent_a, fl);  
+
+            updateAgentState(agent_a); 
 
         }
 
         // gather agent action forces 
-        float* calcActionForce(list<Particle>* agents){
-            float* force_array = new float[num_agents];  // allocate memory
+        vector<float>* calcActionForce(list<Particle>* agents){
+            vector<float>* force_array = new float[num_agents];  // allocate memory
             list<Particle>& agents_actual = *agents; // dereferences 
             float noise = 0;   
 
@@ -85,26 +98,24 @@ class GridEnvironment{
             return force_array; 
         }
 
-        void applyEnvironmentForce(std::vector<Particle>& entities, std::vector<float>& p_force) {
+        std::list<float> applyEnvironmentForce(std::list<Particle>& entities, std::list<float>& p_force) {
             // Simple collision response
-            for (size_t a = 0; a < entities.size(); ++a) {
-                for (size_t b = a + 1; b < entities.size(); ++b) {
-                    std::vector<float> forces = getCollisionForce(&entities[a], &entities[b]);
-                    if (forces[0] != 0.0) { // might need to be fixed here
-                        if (p_force[a] == 0.0) {
-                            p_force[a] = 0.0;
-                        }
-                        p_force[a] += forces[0];
-                    }
-                    if (forces[1] != 0.0) {
-                        if (p_force[b] == 0.0) {
-                            p_force[b] = 0.0;
-                        }
-                        p_force[b] += forces[1];
+            auto it_force = p_force.begin();  // Iterator for p_force list
+
+            for (auto it_a = entities.begin(); it_a != std::prev(entities.end()); ++it_a) {
+                for (auto it_b = std::next(it_a); it_b != entities.end(); ++it_b) {
+                    std::vector<float> forces = getCollisionForce(&(*it_a), &(*it_b));
+                    if (!forces.empty()) {  // Check if forces vector is not empty
+                        // Update forces in p_force list using iterators
+                        *it_force++ += forces[0];  // Add force to the current position in p_force
+                        *it_force++ += forces[1];  // Add force to the next position in p_force
                     }
                 }
             }
+
+            return p_force;
         }
+
 
         vector<float> getCollisionForce(Particle* a, Particle* b){
             Particle& agent_a = *a; // dereferences 
