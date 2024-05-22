@@ -85,8 +85,25 @@ class GridEnvironment{
             return force_array; 
         }
 
-        float calcEnvironmentForce(list<Particle>* agents, float* p_force){
-            return 0.0; 
+        void applyEnvironmentForce(std::vector<Particle>& entities, std::vector<float>& p_force) {
+            // Simple collision response
+            for (size_t a = 0; a < entities.size(); ++a) {
+                for (size_t b = a + 1; b < entities.size(); ++b) {
+                    std::vector<float> forces = getCollisionForce(&entities[a], &entities[b]);
+                    if (forces[0] != 0.0) { // might need to be fixed here
+                        if (p_force[a] == 0.0) {
+                            p_force[a] = 0.0;
+                        }
+                        p_force[a] += forces[0];
+                    }
+                    if (forces[1] != 0.0) {
+                        if (p_force[b] == 0.0) {
+                            p_force[b] = 0.0;
+                        }
+                        p_force[b] += forces[1];
+                    }
+                }
+            }
         }
 
         vector<float> getCollisionForce(Particle* a, Particle* b){
