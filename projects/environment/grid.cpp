@@ -1,5 +1,6 @@
 #include <iostream>
 #include <list>
+#include <random>
 #include "particle.h"
 #include "grid.h"
 
@@ -9,7 +10,7 @@ class GridEnvironment{
 
     public: 
         // list of items in env (entities not included yet)
-        list<Particle> agents; 
+        list<Particle>** agents; 
         // communication channel dim 
         int dim_c; 
         // pos dimensionality 
@@ -27,6 +28,8 @@ class GridEnvironment{
         int num_rows; 
         int num_cols; 
         int** arrayxy;
+        int num_agents; 
+        vector<float> forces; 
 
         // constructor 
         GridEnvironment(int rows, int cols) {
@@ -37,6 +40,7 @@ class GridEnvironment{
             for (int i = 0; i < num_rows; ++i) {
                 arrayxy[i] = new int[num_cols];  // Allocate memory for each row's columns
             }
+
         }
 
         ~GridEnvironment() {
@@ -47,14 +51,38 @@ class GridEnvironment{
             delete[] arrayxy;
         }
 
-        list<Particle> returnEntities(){return agents;}
+        // list<Particle> returnEntities(){return agents;}
 
         void step(){
 
         }
 
-        float calcActionForce(){
-            return 0.0; 
+        // gather agent action forces 
+        float* calcActionForce(list<Particle>* agents){
+            float* force_array = new float[num_agents];  // allocate memory
+            list<Particle>& agents_actual = *agents; // dereferences 
+            float noise = 0;   
+
+            std::random_device rd;
+            std::mt19937 gen(rd());
+
+            int ind = 0; 
+        
+            for (list<Particle>::iterator it = agents_actual.begin(); it != agents_actual.end(); ++it){
+                Particle& agent = *it;
+                std::normal_distribution<float> dist(0.0f, agent.u_noise);
+
+                if (agent.moveable){
+                    if (agent.u_noise){
+                    noise = dist(gen); 
+                    }
+                    float force = agent.action + noise; 
+                    force_array[ind] = force; 
+                    ind += 1; 
+                }
+            }
+
+            return force_array; 
         }
 
         float calcEnvironmentForce(){
