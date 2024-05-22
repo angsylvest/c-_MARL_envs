@@ -64,7 +64,7 @@ class GridEnvironment{
             // TODO: need to fix, will cause errors 
             list<float> fl_out = applyEnvironmentForce(agent_a, force_array);  
 
-            updateAgentState(agent_a); 
+            updateAgentState(agents, fl_out); 
 
         }
 
@@ -152,7 +152,7 @@ class GridEnvironment{
         }
 
 
-        void updateAgentState(list<Particle> agents){
+        void updateAgentState(list<Particle>* agents, list<float> force){
 
         }
 
