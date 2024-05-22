@@ -1,40 +1,81 @@
-
 #include <iostream>
 #include <vector>
-// #include "particle.h"
+#include "particle.h"
 
 using namespace std;
 
-class Particle{
-    public: 
-        char** id; 
-        bool collide; 
-        vector<float> position; 
-        float mass; 
+// class for agent in multi-particle environment 
 
-    Particle(char** id_val, float x_pos, float y_pos, float mass_given){
-        id = id_val;
-        position = {x_pos, y_pos}; 
-        mass = mass_given; 
-    }
+class Entity {
+        public: 
+            // name 
+            char** id;
+            // properties
+            float size = 0.050;  
+            // can be moved/pushed 
+            bool moveable = true;
+            // collision possible 
+            bool collide = true; 
+            // density 
+            float density = 25.0; 
+            // color 
+            char** color; 
+            // max speed 
+            float max_speed = 5.0; 
+            float accel; 
+            // state info 
+            vector<float> position; 
+            vector<float> velocity; 
+            // mass 
+            float mass = 1.0; 
 
-    void updatePos(char** id_given,float x_pos, float y_pos){
-        if (id_given == id){
-            position = {x_pos, y_pos}; 
+        float getMass(){
+            return mass; 
         }
-    }
+}; 
 
-    void updateVector(vector<float> force){
-        // Calculate acceleration: a = F / m
-        vector<float> acceleration = {force[0] / mass, force[1] / mass};
 
-        // Update velocity: v = v0 + a * t (t = 1 second here)
-        float velocity_x = acceleration[0];
-        float velocity_y = acceleration[1];
+class Particle : private Entity{
+    public: 
+        // agents moveable by default 
+        bool moveable = true; 
+        // cannot send comm signals 
+        bool silent = false; 
+        // cannot observe world 
+        bool blind = false; 
+        // physical motor noise 
+        float u_noise; 
+        // communication noise 
+        float c_noise; 
+        // control range 
+        float u_range = 1.0; 
+        // state info 
+        vector<float> p_pos;  
+        vector<float> p_vel;  
+        // current action 
+        float action; 
+        int comm_action; 
 
-        // Update position: r = r0 + v * t + 0.5 * a * t^2 (t = 1 second here)
-        position[0] += velocity_x + 0.5 * acceleration[0];
-        position[1] += velocity_y + 0.5 * acceleration[1];
-    }
+
+        Particle(char** id_val, float x_pos, float y_pos){
+            id = id_val;
+            position = {x_pos, y_pos}; 
+            velocity = {0,0}; 
+        
+        }
+
+        // update pos of agent given action 
+        void updatePos(char** id_given,float x_pos, float y_pos){
+            if (id_given == id){
+                position = {x_pos, y_pos}; 
+            }
+        }
+
+        // update velocity instance var 
+        void updateVelocity(char** id_given, vector<float> vel){
+            if (id_given == id){
+                velocity = vel; 
+            }
+        }
 
 }; 

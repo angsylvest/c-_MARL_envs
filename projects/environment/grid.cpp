@@ -1,10 +1,28 @@
 #include <iostream>
-
+#include <list>
+#include "particle.h"
+#include "grid.h"
 using namespace std;
 
 class GridEnvironment{ 
 
     public: 
+        // list of items in env (entities not included yet)
+        list<Particle> agents; 
+        // communication channel dim 
+        int dim_c; 
+        // pos dimensionality 
+        int dim_pos = 2; 
+        // color dimensionality
+        int color_dim = 3; 
+        // sim timestep 
+        float dt = 0.1; 
+        // physical dampling
+        int damping = 0.25; 
+        // contact force params 
+        float contact_force = 0.01;
+        float contact_margin = 0.001;  
+        // other gen params
         int num_rows; 
         int num_cols; 
         int** arrayxy;
@@ -28,6 +46,28 @@ class GridEnvironment{
             delete[] arrayxy;
         }
 
+        list<Particle> returnEntities(){return agents;}
+
+        void step(){
+
+        }
+
+        float calcActionForce(){
+            return 0.0; 
+        }
+
+        float calcEnvironmentForce(){
+            return 0.0; 
+        }
+
+        vector<float> getCollisionForce(Particle a, Particle b){
+            return {0,0}; 
+        }
+
+        void updateAgentState(list<Particle> agents){
+
+        }
+
         void printGrid(){
             // Populate and print the 2D array 
             for (int i = 0; i < num_rows; ++i) {
@@ -42,11 +82,8 @@ class GridEnvironment{
 
 int main(){
     cout << "GRID\n" << endl; 
-
     GridEnvironment grid = GridEnvironment(5, 5); 
-
     grid.printGrid();
-
     return 0;  
 
 
