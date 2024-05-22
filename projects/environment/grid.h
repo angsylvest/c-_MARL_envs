@@ -1,8 +1,6 @@
 #ifndef GRID_H_INCLUDED
 #define GRID_H_INCLUDED
 
-#include "grid.h"
-
 class GridEnvironment {
 public:
     list<Particle> agents; 

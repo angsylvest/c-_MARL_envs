@@ -2,6 +2,7 @@
 #include <list>
 #include "particle.h"
 #include "grid.h"
+
 using namespace std;
 
 class GridEnvironment{ 
